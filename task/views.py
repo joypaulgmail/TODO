@@ -49,15 +49,52 @@ def deletetask(request):
         return render(request, "task/home.html", {"task": newob})
 
 def work(request):
-    ob=meeting.objects.all()
+    ob=working.objects.all()
 
     return render(request, "work/work.html",{"task":ob})
 
-def worktask(request):
+
+def workadd(request):
+
+        return render(request, "work/worktask.html")
+
+def addsubmit(request):
+    if request.method == "POST":
+        title = request.POST.get('title')
+        time = request.POST.get('time')
+        date = request.POST.get('date')
+        s = working(title=title, time=time, date=date)
+        s.save()
+        newob = working.objects.all()
+        return render(request, "work/work.html", {"task": newob})
+
+def editwork(request):
+    if request.method=="POST":
+        id=request.POST.get('id')
+        ob=working.objects.get(id=id)
+        title=ob.title
+        date=ob.date
+        time=ob.time
+        ob.delete()
+        return render(request,"work/worktask.html",{"title":title,"date":date,"time":time,})
+    else:
+        return render(request, "work/work.html")
+
+
+def deletework(request):
+    if request.method=="POST":
+        id=request.POST.get('id')
+        ob=working.objects.get(id=id)
+        ob.delete()
+        newob=working.objects.all()
+        return render(request,"work/work.html",{"task":newob})
+    else:
+        return render(request, "task/home.html", {"task": newob})
 
 
 
 
-    return render(request,"work/worktask.html")
+
+
 
 

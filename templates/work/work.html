@@ -1,4 +1,4 @@
-{% extends 'task/home.html' %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,27 +23,27 @@ ul{list-style-type:none;}
 
 </style>
 <body>
-{% block content %}
 
 
+<h1>hello</h1>
 
-{% for i in ob %}
+{% for i in task %}
 <ul>
     <li ><a id="item" href="">{{i.title}}</a></li>
   <li id="date">{{i.date}} {{i.time}}</li>
-   <form action="/edit/" method="post">
+   <form action="/editwork/" method="post">
     {% csrf_token %}<button type="submit" value="{{i.id}}" name="id">UPDATE</button></form>
-  <form action="/delete/" method="post">
+  <form action="/deletework/" method="post">
     {% csrf_token %}<button type="submit" value="{{i.id}}" name="id">DELETE</button></form>
 
 </ul>
 {% endfor %}
 
 
-  <form action="/worktask/" method="post">
+  <form action="/workadd/" method="post">
     {% csrf_token %}
             <button type="submit" id="sbmt"><i class="fa fa-plus-circle fa_custom fa-4x"></i></button>
         </form>
-{% endblock %}
+
 </body>
 </html>
