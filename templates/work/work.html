@@ -25,12 +25,9 @@ ul{list-style-type:none;}
 <body>
 
 
-<h1>hello</h1>
-
 {% for i in task %}
 <ul>
     <li ><a id="item" href="">{{i.title}}</a></li>
-  <li id="date">{{i.date}} {{i.time}}</li>
    <form action="/editwork/" method="post">
     {% csrf_token %}<button type="submit" value="{{i.id}}" name="id">UPDATE</button></form>
   <form action="/deletework/" method="post">

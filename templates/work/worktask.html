@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
 <title>work</title>
 
 
@@ -92,13 +93,15 @@ code {
 
 <body>
 
-<form action="/addsubmit/" method="post">
+<form  action="/addsubmit/" method="post">
     {% csrf_token %}
-
-    <label>Task</label>
-    <input type="text" name="title" value="{{title}}">
 <div class="form-group">
-<p>Date: <input type="text" id="datepicker"  class="form-control"   name="date" placeholder="10/12/19" value="{{date}}"></p>
+    <label>WHAT YOU WNATED TO DO ADD</label>
+    <input type="text" placeholder="submit Sandis Project" class="text-line"  name="title" value="{{title}}">
+
+
+<p>Date: <input type="text" id="datepicker" class="col-sm-2"   name="date" placeholder="10/12/19" value="{{date}}">
+</p>
 </div>
 
     	<div class="form-group">
@@ -107,9 +110,10 @@ code {
 			<div class="input-group clockpicker pull-left"  data-autoclose="true">
 				<input type="text" class="form-control" name="time" value="{{time}}">
 				<span class="input-group-addon">
-					<span class="glyphicon glyphicon-time"></span>
+					<span class="glyphicon glyphicon-calendar"></span>
 				</span>
 			</div>
+
 		</div>
 	</div>
 

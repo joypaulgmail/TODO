@@ -1,10 +1,64 @@
 from django.shortcuts import render
 from task.models import task,working,shoping,meeting
 from django.http import HttpResponse
+from playsound import playsound
+import datetime
 
 def home(request):
+    hour=datetime.datetime.now().hour
+    if hour>12:
+        hour=hour-12
+    else:
+        hour=hour
+    if hour<10:
+        hour="0"+str(hour)
+    else:
+        hour=str(hour)
+    print(hour,"hour")
+
+
+
+
+
+
+    minute=str(datetime.datetime.now().minute)
+
+    current_time=hour+":"+minute
+
+    month = datetime.datetime.now().month
+    day = datetime.datetime.now().day
+    year = str(datetime.datetime.now().year)
+
+    if month<10:
+        month=str(0)+str(month)
+    else:
+        month=str(month)
+
+    if day < 10:
+        day = str(0) + str(day)
+    else:
+        day = str(day)
+
+
+
+    current_date =month+"/"+day+"/"+year
+    print("current date",current_date)
+    print(current_time)
+
+
+
+
 
     ob = task.objects.all()
+    for i in ob:
+        if i.date==current_date and i.time==current_time:
+            playsound('M:\songs\mornig.mp3')
+            break
+
+
+
+
+
     return render(request,"task/home.html",{"task":ob})
 
 def personaltask(request):
