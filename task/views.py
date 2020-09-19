@@ -99,8 +99,7 @@ def deletetask(request):
         ob.delete()
         newob=task.objects.all()
         return render(request,"task/home.html",{"task":newob})
-    else:
-        return render(request, "task/home.html", {"task": newob})
+
 
 def work(request):
     ob=working.objects.all()

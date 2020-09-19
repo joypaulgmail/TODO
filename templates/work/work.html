@@ -11,27 +11,45 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
+<link type="text/css" rel="stylesheet" href="{% static 'work/works.css' %}">
 <style type="text/css">
+body{padding:0;
+margin:0;
+}
+
 .fa_custom {
 color: #0099CC
 }
-#sbmt{position:absolute;margin-top:10px;margin-left:330px;}
-#item:hover{font-size:20px;}
+#sbmt{position:absolute;margin-top:10px;margin-left:30px;}
 #date{display:hide;}
 li{position:relative;}
 ul{list-style-type:none;}
+#first{background-color:green;margin-left:30%;margin-top:30px;width:600px;height:600px;}
 
+form{display:inline;form:margin-left:300px;}
+#dlt{background-color:red;}
+#lists{padding-left:250px;margin-top:80px;}
+#item{background-color:pink;margin-top:20px;border-radius:8px;width:500px;}
+.one{display:inline;}
 </style>
-<body>
-
+<body  >
+<div id="first" style="background-image: url({% static 'work/work.jpg' %});">
 
 {% for i in task %}
 <ul>
-    <li ><a id="item" href="">{{i.title}}</a></li>
+    <li id="item">
+
+    <div class="one" id="listitem" >{{i.title}}</div>
+        <div class="one" id="listitem" >{{i.date}}</div>
+   <div  class="one" id="lists">
    <form action="/editwork/" method="post">
-    {% csrf_token %}<button type="submit" value="{{i.id}}" name="id">UPDATE</button></form>
-  <form action="/deletework/" method="post">
-    {% csrf_token %}<button type="submit" value="{{i.id}}" name="id">DELETE</button></form>
+    {% csrf_token %}<button type="submit" class="btn btn-primary" value="{{i.id}}" name="id">UPDATE</button></form><span>
+  <form  action="/deletework/" method="post">
+    {% csrf_token %}<button type="submit" id="dlt" class="btn btn-danger" value="{{i.id}}" name="id"><i class="fa fa-times" aria-hidden="true"></i></button></form></span>
+  </div>
+    </li>
+
+
 
 </ul>
 {% endfor %}
@@ -41,6 +59,6 @@ ul{list-style-type:none;}
     {% csrf_token %}
             <button type="submit" id="sbmt"><i class="fa fa-plus-circle fa_custom fa-4x"></i></button>
         </form>
-
+</div>
 </body>
 </html>
