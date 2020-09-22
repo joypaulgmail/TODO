@@ -21,6 +21,8 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <title>ClockPicker</title>
 
 
@@ -37,7 +39,7 @@
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	font-size: 14px;
 }
-form{margin:20px;padding:20px;}
+
 table {
 	border-collapse: collapse;
 }
@@ -87,35 +89,85 @@ code {
     float: right;
   }
 }
+#task{border-radius:20px;width:340px;height:45px;margin-left:40px;margin-top:60px;padding:10px;font-size:20px;}
+#datepicker{height:32px;width:90px;padding:0;margin:0;outline:none;border:none;padding:8px;border-radius:3px;}
+li{display:inline-block;margin:22px;}
+#sbmt{margin-left:40%;margin-top:230px;width:100px;background-color:#0D2B4C;color:white;}
+#sbmt:hover{background-color:white;color:#0D2B4C;transition:0.5s}
+
+
+.navbar {
+  background-color: #333;
+  position: fixed;
+  margin-top:30px;
+  width:450px;
+}
+
+
+
 </style>
 </head>
 
 <body>
 
+<div style="width:450px;height:600px;margin-left:500px;margin-top:50px;background-color:#0180F3">
+    <div style="width:450px;height:50px;padding-top:20px;">
+        <h1 class="bg-white" style="padding-top:20px;color:white;text-align:center;padding:0;margin:0;font-weight:bold">TODO</h1>
+    </div>
+
+
 <form action="/addtask/" method="post">
     {% csrf_token %}
 
-    <label>Task</label>
-    <input type="text" name="title" value="{{title}}">
-<div class="form-group">
-<p>Date: <input type="text" id="datepicker"  class="form-control"   name="date" placeholder="10/12/19" value="{{date}}"></p>
-</div>
+    <input id="task" placeholder="what you wanted to do.." class="form-control form-rounded" type="text" name="title" value="{{title}}">
+    <br>
 
+
+<ul>
+    <li>
+	<div class="form-group">
+
+		<div class="clearfix">
+			<div class="input-group datepicker pull-right"  data-autoclose="true">
+                <input type="text" id="datepicker"    name="date" placeholder="10/12/19" value="{{date}}">
+
+				<span class="input-group-addon">
+					<span class="glyphicon glyphicon-calendar"></span>
+				</span>
+			</div>
+		</div>
+	</div>
+    </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li>
     	<div class="form-group">
 
 		<div class="clearfix">
 			<div class="input-group clockpicker pull-left"  data-autoclose="true">
-				<input type="text" class="form-control" name="time" value="{{time}}">
+				<input type="text" class="form-control" id="time" name="time" placeholder="11:10" value="{{time}}">
 				<span class="input-group-addon">
 					<span class="glyphicon glyphicon-time"></span>
 				</span>
 			</div>
 		</div>
 	</div>
+</li>
+</ul>
 
-
-
-    <button type="submit"  class="btn btn-default">add</button>
+    <button type="submit" id="sbmt" class="btn">add</button>
 
 </form>
 
@@ -200,7 +252,10 @@ ui-lightness/jquery-ui.css'
 
 
 
+<div class="navbar">
 
+</div>
 
+</div>
 </body>
 </html>

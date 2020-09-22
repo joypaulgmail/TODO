@@ -12,17 +12,35 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <style type="text/css">
+.btn-fixed{margin-left:320px;}
 .fa_custom {
 color: #0099CC
 }
-#sbmt{position:absolute;margin-top:10px;margin-left:330px;}
-#item:hover{font-size:20px;}
-#date{display:hide;}
-li{position:relative;}
-ul{list-style-type:none;}
+#title{color:white;font-size:20px;padding:10px;color:black;font-style:italic;font-weight:bold;}
+#sbmt{border:none;outline:none;background:transparent;font-size:25px;color:white;}
+
+ul {
+  list-style-type:none;
+}
+.form1{display:inline;}
+.inner{position:absolute;}
+.outer{margin-left:230px;padding:10px;color:black;}
+#curentdate{color:blue;font-size:10px;}
+#dlt{background:none;color:white;border:none:outline:none;}
+button:focus { outline: none; }
+.item{background-color:#73B3FB;width:350px;height:50px;border-radius:15px;}
+
+
+
+
+
+
+
+
 
 </style>
 <body>
+<div style="width:450px;height:645px;margin-left:500px;margin-top:50px;background-color:#0180F3">
 
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
@@ -38,36 +56,54 @@ ul{list-style-type:none;}
       <ul class="nav navbar-nav">
         <li class="active"><a href="/">Personal</a></li>
         <li><a href="/work/">Work</a></li>
-        <li><a href="/shoping/">Shoping</a></li>
-          <li><a href="/meeting/">Meeting</a></li>
+          <li><a style="color:white;font-size:20px;margin-left:30px;" id="curenttime"><i>Today : {{time}}</i></a></li>
       </ul>
 
 
 
     </div>
   </div>
+    <form class ="btn-fixed"  action="/personaltask/" method="post">
+    {% csrf_token %}
+            <button  type="submit" id="sbmt"><i class="fa fa-plus"></i></button>
+        </form>
 </nav>
+
+
+
 
 {% block content %}
 
+
 {% for i in task %}
-<ul>
-    <li ><a id="item" href="">{{i.title}}</a></li>
-  <li id="date">{{i.date}} {{i.time}}</li>
-   <form action="/edit/" method="post">
-    {% csrf_token %}<button type="submit" value="{{i.id}}" name="id">UPDATE</button></form>
-  <form action="/delete/" method="post">
-    {% csrf_token %}<button type="submit" value="{{i.id}}" name="id">DELETE</button></form>
+  <ul>
+    <li class="item">
+
+    <div class="inner">
+      <div  id="title">{{i.title}}</div>
+    </div>
+
+
+
+
+     <div class="outer">
+          <form  class="form1" action="/edit/" method="post">
+          {% csrf_token %}<button type="submit" value="{{i.id}}" name="id">Chenge</button>
+          </form>
+          <form class="form1" action="/delete/" method="post">
+          {% csrf_token %}<button id="dlt" type="submit" value="{{i.id}}" name="id"><i class="fa fa-trash" aria-hidden="true"></i></button>
+          </form>
+      </div>
+    </li>
 
 </ul>
+
 {% endfor %}
 
 
-  <form action="/personaltask/" method="post">
-    {% csrf_token %}
-            <button type="submit" id="sbmt"><i class="fa fa-plus-circle fa_custom fa-4x"></i></button>
-        </form>
+
 {% endblock %}
+  </div>
 </body>
 </html>
 

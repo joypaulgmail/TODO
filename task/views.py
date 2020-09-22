@@ -4,8 +4,13 @@ from django.http import HttpResponse
 from playsound import playsound
 import datetime
 
+month = datetime.datetime.now().month
+day = datetime.datetime.now().day
+dm = str(day) + "/" + str(month)
+
 def home(request):
     hour=datetime.datetime.now().hour
+
     if hour>12:
         hour=hour-12
     else:
@@ -21,12 +26,23 @@ def home(request):
 
 
 
-    minute=str(datetime.datetime.now().minute)
+
+
+    minute=datetime.datetime.now().minute
+
+    if minute<10:
+        minute=str(0)+str(minute)
+
+    else:
+        minute = str(minute)
+
+    print(hour, "hour")
 
     current_time=hour+":"+minute
 
     month = datetime.datetime.now().month
     day = datetime.datetime.now().day
+    dm=str(day)+"/"+str(month)
     year = str(datetime.datetime.now().year)
 
     if month<10:
@@ -59,7 +75,8 @@ def home(request):
 
 
 
-    return render(request,"task/home.html",{"task":ob})
+
+    return render(request,"task/home.html",{"task":ob,"time":dm})
 
 def personaltask(request):
 
@@ -69,6 +86,9 @@ def personaltask(request):
     return render(request,"task/task.html")
 
 def addtask(request):
+    date=datetime.datetime.now().day
+    month=datetime.datetime.now().month
+
     if request.method=="POST":
         title=request.POST.get('title')
         time=request.POST.get('time')
@@ -76,7 +96,7 @@ def addtask(request):
         s=task(title=title,time=time,date=date,category="personal")
         s.save()
         newob = task.objects.all()
-        return render(request, "task/home.html", {"task": newob})
+        return render(request, "task/home.html", {"task": newob,"time":dm})
 
 
 def edittask(request):
@@ -98,7 +118,7 @@ def deletetask(request):
         ob=task.objects.get(id=id)
         ob.delete()
         newob=task.objects.all()
-        return render(request,"task/home.html",{"task":newob})
+        return render(request,"task/home.html",{"task":newob,"time":dm})
 
 
 def work(request):
