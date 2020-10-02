@@ -11,7 +11,7 @@ admin.site.register(meeting,Meetingadmin)
 
 
 class Taskadmin(admin.ModelAdmin):
-    list_display = ['title','date','time','category']
+    list_display = ['id','title','date','time','category']
 
 admin.site.register(task,Taskadmin)
 

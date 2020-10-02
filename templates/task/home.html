@@ -26,9 +26,10 @@ ul {
 .inner{position:absolute;}
 .outer{margin-left:230px;padding:10px;color:black;}
 #curentdate{color:blue;font-size:10px;}
-#dlt{background:none;color:white;border:none:outline:none;}
+#dlt{background:none;;color:black;border:none:outline:none;}
 button:focus { outline: none; }
 .item{background-color:#73B3FB;width:350px;height:50px;border-radius:15px;}
+.item:hover{background-color:white;tansition:0.7s;}
 
 
 
@@ -56,7 +57,7 @@ button:focus { outline: none; }
       <ul class="nav navbar-nav">
         <li class="active"><a href="/">Personal</a></li>
         <li><a href="/work/">Work</a></li>
-          <li><a style="color:white;font-size:20px;margin-left:30px;" id="curenttime"><i>Today : {{time}}</i></a></li>
+          <li><a style="color:white;font-size:20px;margin-left:30px;" id="curenttime"><i>{{weekday}} : {{time}}</i></a></li>
       </ul>
 
 

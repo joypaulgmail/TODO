@@ -3,10 +3,13 @@ from task.models import task,working,shoping,meeting
 from django.http import HttpResponse
 from playsound import playsound
 import datetime
-
+from django.views.generic import View
+import json
+from django.core.serializers import serialize
 month = datetime.datetime.now().month
 day = datetime.datetime.now().day
 dm = str(day) + "/" + str(month)
+weekday=datetime.datetime.today().strftime('%A')
 
 def home(request):
     hour=datetime.datetime.now().hour
@@ -76,7 +79,7 @@ def home(request):
 
 
 
-    return render(request,"task/home.html",{"task":ob,"time":dm})
+    return render(request,"task/home.html",{"task":ob,"time":dm,'weekday':weekday})
 
 def personaltask(request):
 
@@ -164,8 +167,21 @@ def deletework(request):
     else:
         return render(request, "task/home.html", {"task": newob})
 
+class Totaldata(View):
+    def get(self,request,*args,**kwargs):
+        ob=task.objects.all()
 
+        json_data=serialize('json',ob,fields=('title','date'))
+        dic=json.loads(json_data)
+        lis=[]
+        for ob in dic:
+            single=ob['fields']
+            lis.append(single)
+        json_data=json.dumps(lis)
+        print(lis)
 
+        return HttpResponse(json_data,content_type="application/json")
+        
 
 
 
