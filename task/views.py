@@ -1,11 +1,10 @@
 from django.shortcuts import render
 from task.models import task,working,shoping,meeting
-from django.http import HttpResponse
+from django.http import HttpResponse,Http404
 from playsound import playsound
 import datetime
 from django.views.generic import View
 import json
-from django.core.serializers import serialize
 month = datetime.datetime.now().month
 day = datetime.datetime.now().day
 dm = str(day) + "/" + str(month)
@@ -182,6 +181,165 @@ class Totaldata(View):
 
         return HttpResponse(json_data,content_type="application/json")
         
+
+
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.parsers import JSONParser
+from task.models import task
+from task.serial import TaskSerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+
+@csrf_exempt
+def snippet_list(request,pk):
+    try:
+        single = task.objects.get(id=pk)
+    except task.DoesNotExist:
+        return HttpResponse(status=401)
+
+    if request.method == 'GET':
+        totalobjects=task.objects.all()
+        serializer = TaskSerializer(totalobjects,many=True)
+        return JsonResponse(serializer.data,safe=False)
+
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = TaskSerializer(data=data)
+        if serializer.is_valid():
+            print("post")
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors, status=400)
+
+
+
+
+
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer = TaskSerializer(single, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors, status=400)
+
+    elif request.method == 'DELETE':
+        single.delete()
+        return HttpResponse(status=201)
+
+
+
+
+
+
+
+
+@api_view(['GET','POST','PUT','DELETE'])
+def listdata(request,pk):
+    try:
+        single = task.objects.get(id=pk)
+    except task.DoesNotExist:
+        return HttpResponse(status=401)
+    if request.method=="GET":
+        ob=task.objects.all()
+        serializer=TaskSerializer(ob,many=True)
+        return Response(serializer.data)
+
+    elif request.method=="POST":
+        serializer=TaskSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.error,status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method=="PUT":
+        serializer=TaskSerializer(single,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.error,status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method=="DELETE":
+        single.delete()
+        return HttpResponse(status=201)
+
+
+from rest_framework.views import APIView
+class TaskList(APIView):
+
+    def get_object(self, pk):
+        try:
+            return task.objects.get(id=pk)
+        except task.DoesNotExist:
+            raise Http404
+
+
+
+
+
+    def get(self,request,pk,format=None):
+        qr=task.objects.all()
+        serializer=TaskSerializer(qr,many=True)
+        return Response(serializer.data)
+    def post(self,request,pk):
+        serializer=TaskSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.error,status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self,request,pk):
+        ob=self.get_object(pk)
+        serializer=TaskSerializer(ob,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.error,status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        ob= self.get_object(pk)
+        ob.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['GET'])
+def gt(request,pk):
+    try:
+        qr=task.objects.get(id=pk)
+    except task.DoesNotExist:
+        return HttpResponse(status=401)
+    serializer=TaskSerializer(qr)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def pst(request):
+    serializer=TaskSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data,status=status.HTTP_201_CREATED)
+    return Response(serializer.error,status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
