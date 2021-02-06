@@ -10,6 +10,18 @@ day = datetime.datetime.now().day
 dm = str(day) + "/" + str(month)
 weekday=datetime.datetime.today().strftime('%A')
 
+
+
+
+'''from django.db.models.signals import post_save,post_delete
+from django.dispatch import receiver
+@receiver(post_save,sender=task)
+def siggtask(sender,instance,**kwargs):
+    print("hello")
+
+@receiver(post_delete,sender=task)
+def dele(sender,instance,**kwargs):
+    print("delete")'''
 def home(request):
     hour=datetime.datetime.now().hour
 
@@ -275,10 +287,6 @@ class TaskList(APIView):
         except task.DoesNotExist:
             raise Http404
 
-
-
-
-
     def get(self,request,pk,format=None):
         qr=task.objects.all()
         serializer=TaskSerializer(qr,many=True)
@@ -321,23 +329,322 @@ def pst(request):
         return Response(serializer.data,status=status.HTTP_201_CREATED)
     return Response(serializer.error,status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['PUT',])
+def put(request,pk):
+    try:
+        qr=task.objects.get(id=pk)
+    except task.DoesNotExist:
+        return HttpResponse(status=401)
+    serializer=TaskSerializer(qr,data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.error,status=status.HTTP_400_BAD_REQUEST)
+
+def delete(request,pk):
+    try:
+        qr=task.objects.get(id=pk)
+    except task.DoesNotExist:
+        return HttpResponse(status=401)
+    qr.delete()
+    return HttpResponse(status=201)
+
+
+from rest_framework import generics
+from rest_framework import mixins
+
+class GenericAPIView(generics.GenericAPIView,mixins.ListModelMixin,mixins.CreateModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin):
+    serializer_class = TaskSerializer
+    queryset= task.objects.all()
+    def get(self,request,pk):
+
+        return self.list(request)
+
+    def post(self,request,pk):
+        return self.create(request)
+
+    def put(self,request,pk):
+        return self.update(request,pk)
+
+    def delete(self,request,pk):
+        return self.destroy(request,pk)
+
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication,TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+class TaskAPI(generics.GenericAPIView,mixins.ListModelMixin,mixins.RetrieveModelMixin,mixins.CreateModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin):
+    serializer_class = TaskSerializer
+    queryset = task.objects.all()
+    lookup_field = 'id'
+
+   # authentication_classes = [SessionAuthentication, BasicAuthentication]
+    authentication_classes = [SessionAuthentication,BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self,request,id=None):
+        if id:
+            return self.retrieve(request,id)
+        else:
+            return self.list(request)
+
+    def post(self,request,id=None):
+        return self.create(request)
+
+    def put(self,request,id):
+        return self.update(request,id)
+
+    def delete(self,request,id=None):
+        self.destroy(request)
+        return HttpResponse(status=201)
+
+
+'''
+from rest_framework import viewsets
+class Taskviewset(viewsets.ModelViewSet):
+    queryset = task.objects.all()
+    serializer_class = TaskSerializer
+
+'''
+
+
+class DetailApi(APIView):
+    def get(self,request,pk):
+        try:
+            ob = task.objects.get(id=pk)
+
+        except task.DoesNotExist:
+            return HttpResponse(status=401)
+
+        serializer=TaskSerializer(ob)
+        return Response(serializer.data)
+
+    def post(self,request,pk):
+        try:
+            ob = task.objects.get(id=pk)
+
+        except task.DoesNotExist:
+            return HttpResponse(status=401)
+
+        serializer=TaskSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.error,status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self,request,pk):
+        try:
+            ob = task.objects.get(id=pk)
+
+        except task.DoesNotExist:
+            return HttpResponse(status=401)
+
+        serializer=TaskSerializer(ob,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.error,status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self,request,pk):
+        try:
+            ob=task.objects.get(id=pk)
+        except task.DoesNotExist:
+            return HttpResponse(status=401)
+        ob.delete()
+        return  HttpResponse(status=status.HTTP_202_ACCEPTED)
+
+
+
+from rest_framework import generics
+class TaskCreate(generics.ListCreateAPIView):
+    serializer_class = TaskSerializer
+    queryset = task.objects.all()
+
+class TaskRetUpDes(generics.RetrieveDestroyAPIView):
+    queryset = task.objects.all()
+    serializer_class = TaskSerializer
+
+
+
+from django.contrib.auth.models import User
+def usen(request):
+    from django.contrib.auth import authenticate
+    user = authenticate(username='joypaul', password='Joypaul1@#')
+    ob=User(username="halu")
+    ob.save()
+    return HttpResponse("pk")
+
+from task.serial import UserSerializer
+from django.contrib.auth.models import User
+
+class UserApi(APIView):
+    def get(self,request,pk):
+        ob=User.objects.get(id=pk)
+        serializer=UserSerializer(ob)
+        return Response(serializer.data)
+
+    def post(self,request,pk):
+        serializer=UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+    def put(self,request,pk):
+        query=User.objects.get(id=pk)
+        serializer=UserSerializer(query,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.error,status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self,request,pk):
+        query=User.objects.get(id=pk)
+        query.delete()
+        return Response(status=status.HTTP_202_ACCEPTED)
+
+class UserGen(generics.GenericAPIView,mixins.CreateModelMixin,mixins.ListModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    authentication_classes = [SessionAuthentication,BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self,request,pk):
+
+        return self.list(request)
+
+    def post(self, request,pk):
+        return self.create(request)
+
+    def put(self, request, pk):
+        return self.update(request,pk)
+
+    def delete(self,request,pk):
+        return self.destroy(request,pk)
+
+class DemoApi(APIView):
+    authentication_classes = [BasicAuthentication,SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self,request):
+        msz={"name":"joy"}
+        return Response(msz)
+
+
+
+class Another(APIView):
+    def get(self,request,pk):
+        query=task.objects.get(id=pk)
+        serializer=TaskSerializer(query)
+        return Response(serializer.data)
+
+    def post(self,request,pk):
+        serializer=TaskSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors,status=Http404)
+
+    def put(self,request,pk):
+        query=task.objects.get(id=pk)
+        serializer=TaskSerializer(query,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.error,status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self,request,pk):
+        query=task.objects.get(id=pk)
+        query.delete()
+        return  HttpResponse(status=404)
+
+
+
+
+
+class TaskMixin(generics.GenericAPIView,mixins.ListModelMixin,mixins.CreateModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin):
+    serializer_class = TaskSerializer
+    queryset = task.objects.all()
+    authentication_classes = [SessionAuthentication,BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self,request,pk):
+
+        return self.list(request)
+
+    def post(self,request,pk):
+        return self.create(request)
+
+    def put(self,request,pk):
+        return self.update(request,pk)
+
+    def delete(self,request,pk):
+        return self.destroy(request,pk)
+
+
+class Cre(generics.ListCreateAPIView):
+    serializer_class = TaskSerializer
+    queryset = task.objects.all()
+
+class Upd(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = TaskSerializer
+    queryset = task.objects.all()
+    authentication_classes = [SessionAuthentication,BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+from django.db.models import Q
+class Ex(View):
+    def get(self,request,pk):
+        query=task.objects.filter(Q(id=pk) | Q(id=173))
+        if query:
+            print("ok")
+        return HttpResponse(query[0].title)
 
 
 
 
 
 
+def dems(request):
+    if request.method=="POST":
+        form=TaskForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return render(request, 'task/form.html', {'form': form})
+        else:
+            form=TaskForm()
+        return render(request, 'task/form.html', {'form': form})
+
+
+from django.views.generic.base import  RedirectView
+from django.shortcuts import  redirect
+
+def geter(request):
+
+    res=redirect('cre')
+    return res
+
+from django.views.generic.list import  ListView
+class Helptask(ListView):
+    model=task
+
+
+
+from .forms   import Taskforms
+def dis(request):
+    form = Taskforms()
+    if request.method=="POST":
+        form=Taskforms(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponse("data submit")
 
 
 
 
+    return render(request,'task/taskform.html',{'form':form})
 
-
-
-
-
-
-
+from django.contrib.auth.decorators import login_required
+@login_required()
+def profile(request):
+    return render(request,'registration/profile.html')
 
 
 
